@@ -1,0 +1,24 @@
+{
+    "name": "colegio-microservices",
+    "version": "1.0.0",
+    "description": "Microservices for Colegio Portal System",
+    "author": "Colegio Portal Team",
+    "license": "MIT",
+    "scripts": {
+      "setup": "chmod +x ../scripts/setup-microservices.sh && ../scripts/setup-microservices.sh",
+      "start:auth": "cd auth-service && npm run start:dev",
+      "start:users": "cd users-service && npm run start:dev",
+      "start:courses":"cd course-service && npm run start:dev",
+      "start:attendance": "cd attendances-service && npm run start:dev",
+      "start:grades": "cd grades-service && npm run start:dev",
+      "start:all": "concurrently \"npm run start:auth\" \"npm run start:users\" \"npm run start:attendance\" \"npm run start:grades\" \"npm run start:courses\"",
+      "install:all": "cd auth-service && npm install && cd ../user-service && npm install && cd ../attendances-service && npm install && cd ../grades-service && npm install && ../course-service && npm install",
+      "build:all": "cd auth-service && npm run build && cd ../user-service && npm run build && cd ../attendances-service && npm run build && cd ../grades-service && npm run build && ../course-service && npm run build",
+      "clean:all": "cd auth-service && rm -rf node_modules dist && cd ../user-service && rm -rf node_modules dist && cd ../attendances-service && rm -rf node_modules dist && cd ../grades-service && rm -rf node_modules dist",
+      "test:all": "cd auth-service && npm test && cd ../user-service && npm test && cd ../attendances-service && npm test && cd ../grades-service && npm test"
+    },
+    "devDependencies": {
+      "concurrently": "^8.2.2"
+    }
+  }
+  
