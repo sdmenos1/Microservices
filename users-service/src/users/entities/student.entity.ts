@@ -4,6 +4,8 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   CreateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from "typeorm"
 
 @Entity("students")
@@ -58,9 +60,6 @@ export class Student {
 
   @Column({ default: 'student' })
   role: string
-  
-  @Column()
-  courses:number
 
   @CreateDateColumn()
   createdAt: Date

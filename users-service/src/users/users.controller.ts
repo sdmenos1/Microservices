@@ -1,11 +1,11 @@
 import { Controller, Get, Query, Body , Post, Param } from "@nestjs/common"
-import { StudentsService } from "./users.service"
+import { UsersService } from "./users.service"
 import { CreateStudentDto } from "./dto/create-student.dto"
 import { CreateTeacherDto } from "./dto/create-teacher.dto"
 //localhost:3002/students/teachers
 @Controller("students")
 export class StudentsController {
-  constructor(private readonly studentsService: StudentsService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   async getStudents(
@@ -14,7 +14,7 @@ export class StudentsController {
     @Query('level') level?: string,
     @Query('search') search?: string,
   ) {
-    const students = await this.studentsService.getStudents({
+    const students = await this.usersService.getStudents({
       grade,
       section,
       level,
@@ -27,9 +27,10 @@ export class StudentsController {
     }
   }
   //localhost:3002/students/teachers
+  
   @Get('teachers')
 async getAllTeachers() {
-  const teachers = await this.studentsService.getTeachers();
+  const teachers = await this.usersService.getTeachers();
   return {
     success: true,
     data: teachers,
@@ -39,7 +40,7 @@ async getAllTeachers() {
   //localhost:3002/students/(1,2,etc) params -> parametros 
   @Get(":id")
   async getStudent(id: number) {
-    const student = await this.studentsService.getStudentById(id)
+    const student = await this.usersService.getStudentById(id)
     return {
       success: true,
       data: student,
@@ -49,17 +50,28 @@ async getAllTeachers() {
   //localhost:3002/students/teachers/1,2,34
   @Get('teachers/:id')
 async getTeacher(@Param('id') id: number) {
-  const teacher = await this.studentsService.getTeacherById(id);
+  const teacher = await this.usersService.getTeacherById(id);
   return {
     success: true,
     data: teacher,
     message: 'Teacher retrieved successfully',
   };
 }
+// students.controller.ts
+@Get(':id/courses')
+async getStudentCourses(@Param('id') id: number) {
+  const courses = await this.usersService.getStudentCourses(Number(id));
+  return {
+    success: true,
+    data: courses,
+    message: 'Courses retrieved successfully',
+  };
+}
+
 
   @Post("validate-login")
 async validateStudentLogin(@Body() body: { email: string; password: string }) {
-  const student = await this.studentsService.validateStudentLogin(body.email, body.password);
+  const student = await this.usersService.validateStudentLogin(body.email, body.password);
 
   return {
     success: true,
@@ -70,7 +82,7 @@ async validateStudentLogin(@Body() body: { email: string; password: string }) {
 
 @Post("teachers/validate-login")
 async validateTeacherLogin(@Body() body: { email: string; password: string }) {
-  const teacher = await this.studentsService.validateTeacherLogin(body.email, body.password);
+  const teacher = await this.usersService.validateTeacherLogin(body.email, body.password);
 
   return {
     success: true,
@@ -81,7 +93,7 @@ async validateTeacherLogin(@Body() body: { email: string; password: string }) {
 
   @Post()
   async createStudent(@Body() createStudentDto: CreateStudentDto) {
-    const student = await this.studentsService.createStudent(createStudentDto)
+    const student = await this.usersService.createStudent(createStudentDto)
     return {
       success: true,
       data: student,
@@ -91,7 +103,7 @@ async validateTeacherLogin(@Body() body: { email: string; password: string }) {
 
   @Post("/teachers")
   async createTeacher(@Body() createTeacherDto: CreateTeacherDto) {
-    const teacher = await this.studentsService.createTeacher(createTeacherDto)
+    const teacher = await this.usersService.createTeacher(createTeacherDto)
     return {
       success: true,
       data: teacher,

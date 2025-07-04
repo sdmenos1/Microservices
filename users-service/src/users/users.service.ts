@@ -8,12 +8,14 @@ import { CreateStudentDto } from "./dto/create-student.dto";
 import * as bcrypt from 'bcrypt';
 import { UnauthorizedException } from '@nestjs/common';
 import { CreateTeacherDto } from "./dto/create-teacher.dto";
+import { lastValueFrom } from "rxjs";
+import { HttpService } from "@nestjs/axios";
 @Injectable()
-export class StudentsService {
+export class UsersService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
-
+    private readonly httpService: HttpService,
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
   ) {}
@@ -174,4 +176,19 @@ export class StudentsService {
   async getTeachers(){
     return await this.teacherRepository.find({where:{isActive:true},select:['id','firstName','lastName','email','phone','specialization']});
   }
+  // users.service.ts (users-service)
+  async getStudentCourses(studentId: number) {
+    // Asegurarse de que el estudiante existe
+    await this.getStudentById(studentId);
+  
+    try {
+      const response = await lastValueFrom(
+        this.httpService.get(`http://courses-service/courses/student/${studentId}`)
+      );
+      return response.data.data; // porque tu courses-service devuelve { success, data, message }
+    } catch (err) {
+      throw new NotFoundException(`Courses not found for student ${studentId}`);
+    }
+  }
+
 }
